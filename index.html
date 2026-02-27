@@ -2,256 +2,242 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>Бронирование</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-TravelClub Бронирование</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <style>
-body{
-font-family: Arial;
-background:#eef2f6;
-display:flex;
-justify-content:center;
-padding:30px;
+:root { 
+    --accent-orange: #ff8c00; 
+    --primary-blue: #007bff;
+    --success-green: #28a745;
 }
-
-.card{
-background:white;
-width:420px;
-border-radius:12px;
-box-shadow:0 5px 15px rgba(0,0,0,0.15);
-padding:15px;
+body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
+.orange-header { background-color: var(--accent-orange); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 20px; border-radius: 12px 12px 0 0; text-transform: uppercase; }
+.month-btn { 
+    background-color: var(--primary-blue); 
+    color: white; 
+    padding: 6px; 
+    border-radius: 5px; 
+    font-size: 12px; 
+    transition: 0.3s; 
+    width: 100%;
+    cursor: pointer;
 }
-
-.header{
-background:linear-gradient(#3c7bd6,#2a5fa8);
-color:white;
-padding:12px;
-border-radius:10px;
-text-align:center;
-font-weight:bold;
+.month-btn:hover { 
+    background-color: var(--success-green); 
+    color: white;
 }
-
-.months{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:8px;
-margin:15px 0;
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; font-size: 14px; }
+.day-cell { padding: 8px; cursor: pointer; border-radius: 5px; transition: 0.2s; }
+.day-cell:hover { background-color: #e2e8f0; }
+.day-cell.disabled { background-color: #f0f0f0; color: #999; cursor: default; }
+.selected-day { background-color: var(--success-green) !important; color: white; }
+.activity-btn { 
+    background-color: var(--accent-orange); 
+    color: white; 
+    padding: 12px; 
+    border-radius: 8px; 
+    font-weight: bold; 
+    transition: 0.3s; 
+    border: none;
+    width: 100%;
+    cursor: pointer;
 }
-
-.month{
-background:#3c7bd6;
-color:white;
-padding:8px;
-border-radius:6px;
-text-align:center;
-cursor:pointer;
+.activity-btn:hover, .activity-btn.active { 
+    background-color: var(--success-green); 
 }
-
-.calendar-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin:10px 0;
-font-weight:bold;
-}
-
-.arrow{
-cursor:pointer;
-font-size:18px;
-}
-
-.days{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:6px;
-}
-
-.day{
-padding:10px;
-text-align:center;
-border-radius:6px;
-cursor:pointer;
-}
-
-.day:hover{
-background:#dbe7ff;
-}
-
-.selected{
-background:#28a745;
-color:white;
-}
-
-.times{
-margin-top:15px;
-display:flex;
-gap:10px;
-flex-wrap:wrap;
-justify-content:center;
-}
-
-.time{
-background:#3c7bd6;
-color:white;
-padding:10px 14px;
-border-radius:6px;
-cursor:pointer;
-}
-
-.time.selected{
-background:#28a745;
-}
-
-.confirm{
-margin-top:15px;
-background:#28a745;
-color:white;
-padding:12px;
-border-radius:8px;
-text-align:center;
-cursor:pointer;
-font-weight:bold;
-}
-
-.form{
-display:none;
-margin-top:15px;
-}
-
-input{
-width:100%;
-padding:8px;
-margin:6px 0;
-}
-
-.result{
-font-weight:bold;
-margin-top:8px;
-color:#2a5fa8;
-}
+.confirm-btn { background-color: var(--success-green); color: white; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+.voucher-box { border: 2px dashed var(--primary-blue); padding: 15px; background: white; border-radius: 10px; position: relative; }
+.hidden { display: none; }
 </style>
 </head>
+<body class="p-4 flex justify-center">
 
-<body>
+<div id="main-app" class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+    <div class="orange-header">БРОНИРОВАНИЕ</div>
 
-<div class="card">
+    <div id="calendar-section" class="p-5">
+        <p class="text-sm font-semibold text-gray-600 mb-3">Выберите месяц и день:</p>
+        <div class="grid grid-cols-4 gap-2 mb-4">
+            <button class="month-btn" onclick="jumpToMonth(0)">Январь</button>
+            <button class="month-btn" onclick="jumpToMonth(1)">Февраль</button>
+            <button class="month-btn" onclick="jumpToMonth(2)">Март</button>
+            <button class="month-btn" onclick="jumpToMonth(3)">Апрель</button>
+            <button class="month-btn" onclick="jumpToMonth(4)">Май</button>
+            <button class="month-btn" onclick="jumpToMonth(5)">Июнь</button>
+            <button class="month-btn" onclick="jumpToMonth(6)">Июль</button>
+            <button class="month-btn" onclick="jumpToMonth(7)">Август</button>
+            <button class="month-btn" onclick="jumpToMonth(8)">Сентябрь</button>
+            <button class="month-btn" onclick="jumpToMonth(9)">Октябрь</button>
+            <button class="month-btn" onclick="jumpToMonth(10)">Ноябрь</button>
+            <button class="month-btn" onclick="jumpToMonth(11)">Декабрь</button>
+        </div>
 
-<div class="header">📅 Бронирование</div>
+        <div class="flex justify-between items-center py-2 border-y mb-2">
+            <button onclick="changeMonth(-1)" class="text-blue-600 font-bold text-xl px-2">&lt;</button>
+            <span id="month-year-display" class="font-bold text-blue-900">Июль 2026</span>
+            <button onclick="changeMonth(1)" class="text-blue-600 font-bold text-xl px-2">&gt;</button>
+        </div>
 
-<div class="months" id="months"></div>
+        <div class="calendar-grid text-gray-400 font-bold mb-1">
+            <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
+        </div>
+        <div id="days-grid" class="calendar-grid"></div>
 
-<div class="calendar-header">
-<span class="arrow" onclick="changeMonth(-1)">◀</span>
-<span id="currentMonth"></span>
-<span class="arrow" onclick="changeMonth(1)">▶</span>
-</div>
+        <p class="text-sm font-semibold text-gray-600 mt-6 mb-3">Время активности:</p>
+        <div class="grid grid-cols-2 gap-4">
+            <button class="activity-btn" onclick="setActivityTime('РАССВЕТ', this)">РАССВЕТ</button>
+            <button class="activity-btn" onclick="setActivityTime('ЗАКАТ', this)">ЗАКАТ</button>
+        </div>
 
-<div class="days" id="days"></div>
+        <div id="selection-summary" class="mt-4 p-3 bg-blue-50 text-blue-800 text-sm rounded-lg hidden text-center"></div>
 
-<h4 style="text-align:center">Выберите время активности:</h4>
+        <button onclick="openBookingForm()" class="confirm-btn uppercase">Подтвердить ✓</button>
+    </div>
 
-<div class="times">
-<div class="time">🌅 Рассвет</div>
-<div class="time">🌇 Закат</div>
-</div>
+    <div id="form-section" class="p-5 hidden border-t">
+        <h3 class="text-center font-bold text-gray-700 mb-4">Форма бронирования</h3>
+        <div class="space-y-3">
+            <input type="text" id="inp-name" placeholder="Имя и Фамилия" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
+            <input type="text" id="inp-hotel" placeholder="Название отеля или адрес проживания" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
+            <input type="text" id="inp-tg" placeholder="Ваш Telegram (ссылка или @username)" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
+            <input type="tel" id="inp-phone" placeholder="Контактный номер (по желанию)" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
+            <input type="number" id="inp-pax" placeholder="Количество человек" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500" oninput="updateTotal()">
+            
+            <div class="bg-orange-50 p-3 text-xs text-orange-800 rounded-lg border border-orange-200 italic">
+                Уведомление: Мы не берем плату за консультацию с детей 12 лет и младше.
+            </div>
 
-<div class="confirm" onclick="confirmBooking()">✅ Я подтверждаю</div>
+            <div class="text-xl font-bold text-right text-blue-900 border-t pt-2">
+                Общая сумма: <span id="total-val">0</span> $
+            </div>
 
-<div id="selectedInfo"></div>
+            <p class="text-[10px] text-gray-500 leading-tight">
+                * Этот сбор покрывает услуги консультации. Фактическую цену агентства без комиссии вы оплатите наличными поставщику услуг после того, как вас заберут из отеля.
+            </p>
 
-<div class="form" id="form">
-<h3>Форма бронирования</h3>
+            <button onclick="finalizeBooking()" class="orange-header w-full rounded-lg mt-2 cursor-pointer">Создать ваучер</button>
+        </div>
+    </div>
 
-<input placeholder="Имя и фамилия">
-<input placeholder="Телефон">
+    <div id="voucher-section" class="p-5 hidden">
+        <div class="voucher-box">
+            <div class="absolute top-2 right-2 text-blue-600 font-black text-xs">E-TRAVELCLUB</div>
+            <h4 class="font-bold border-b pb-2 mb-3 text-gray-800">ОНЛАЙН ВАУЧЕР</h4>
+            <div class="text-sm space-y-2 text-gray-700">
+                <p><strong>Номер:</strong> <span id="v-id"></span></p>
+                <p><strong>Услуга:</strong> Конная прогулка</p>
+                <p><strong>Дата/Время:</strong> <span id="v-dt"></span></p>
+                <p><strong>Клиент:</strong> <span id="v-name"></span></p>
+                <p><strong>Название отеля или адрес проживания:</strong> <span id="v-hotel"></span></p>
+                <p><strong>Ваш Telegram:</strong> <span id="v-tg"></span></p>
+                <p><strong>Связаться с нами (WhatsApp / Telegram):</strong><br>+90 553 523 51 35</p>
+            </div>
+            <div class="mt-4 text-center text-red-600 font-bold border-t pt-2 animate-pulse">ОЖИДАЕТСЯ ОПЛАТА</div>
+        </div>
 
-<input placeholder="Отель / Адрес проживания">
-
-<input type="number" id="people" placeholder="Количество человек">
-
-<div class="result" id="price"></div>
-
-</div>
-
+        <button onclick="payWithCrypto()" class="confirm-btn mt-5">Перейти к оплате (Crypto)</button>
+        
+        <div class="text-[11px] mt-4 text-gray-500 bg-gray-50 p-3 rounded-lg border">
+            <strong>ПРИМЕЧАНИЕ:</strong> За 48 часов до начала активности на ваш контакт придет сообщение «Я готов». После вашего подтверждения, за 24 часа вам будет сообщено точное время забора из отеля.
+        </div>
+    </div>
 </div>
 
 <script>
+const rusMonths = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+let currentM = 6;
+let currentY = 2026;
+let selectedD = null;
+let selectedT = null;
 
-const monthsRus=[
-"Январь","Февраль","Март","Апрель",
-"Май","Июнь","Июль","Август",
-"Сентябрь","Октябрь","Ноябрь","Декабрь"
-];
+function daysInMonth(year, month) { return new Date(year, month+1, 0).getDate(); }
 
-let currentMonthIndex=new Date().getMonth();
-let selectedDay=null;
-let selectedTime=null;
+function renderDays() {
+    const today = new Date();
+    document.getElementById('month-year-display').innerText = `${rusMonths[currentM]} ${currentY}`;
+    const grid = document.getElementById('days-grid');
+    grid.innerHTML = '';
 
-const monthsDiv=document.getElementById("months");
-monthsRus.forEach((m,i)=>{
-let div=document.createElement("div");
-div.className="month";
-div.innerText=m;
-div.onclick=()=>{currentMonthIndex=i; renderCalendar();}
-monthsDiv.appendChild(div);
-});
+    const firstDay = new Date(currentY, currentM, 1).getDay();
+    const offset = (firstDay === 0) ? 6 : firstDay - 1;
+    for(let i=0; i<offset; i++) grid.innerHTML += '<div></div>';
 
-function renderCalendar(){
-document.getElementById("currentMonth").innerText=
-monthsRus[currentMonthIndex]+" 2026";
+    const totalDays = daysInMonth(currentY, currentM);
+    for(let d=1; d<=totalDays; d++) {
+        let cell = document.createElement('div');
+        cell.innerText = d;
 
-const daysDiv=document.getElementById("days");
-daysDiv.innerHTML="";
-
-for(let i=1;i<=31;i++){
-let d=document.createElement("div");
-d.className="day";
-d.innerText=i;
-
-d.onclick=()=>{
-document.querySelectorAll(".day").forEach(el=>el.classList.remove("selected"));
-d.classList.add("selected");
-selectedDay=i;
-};
-
-daysDiv.appendChild(d);
-}
+        // Проверка на прошедшие дни
+        let dateObj = new Date(currentY, currentM, d);
+        if(dateObj < new Date(today.getFullYear(), today.getMonth(), today.getDate())){
+            cell.className = 'day-cell disabled';
+        } else {
+            cell.className = 'day-cell';
+            cell.onclick = () => {
+                document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected-day'));
+                cell.classList.add('selected-day');
+                selectedD = `${d} ${rusMonths[currentM]} ${currentY}`;
+                showSummary();
+            };
+        }
+        grid.appendChild(cell);
+    }
 }
 
-function changeMonth(step){
-currentMonthIndex+=step;
-if(currentMonthIndex<0) currentMonthIndex=11;
-if(currentMonthIndex>11) currentMonthIndex=0;
-renderCalendar();
+function changeMonth(dir) {
+    currentM += dir;
+    if(currentM > 11) { currentM = 0; currentY++; }
+    if(currentM < 0) { currentM = 11; currentY--; }
+    renderDays();
 }
 
-document.querySelectorAll(".time").forEach(btn=>{
-btn.onclick=()=>{
-document.querySelectorAll(".time").forEach(t=>t.classList.remove("selected"));
-btn.classList.add("selected");
-selectedTime=btn.innerText;
-};
-});
+function jumpToMonth(m) { currentM = m; renderDays(); }
 
-function confirmBooking(){
-if(!selectedDay || !selectedTime){
-alert("Дата и время не выбраны!");
-return;
+function setActivityTime(time, btn) {
+    selectedT = time;
+    document.querySelectorAll('.activity-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    showSummary();
 }
 
-document.getElementById("selectedInfo").innerHTML=
-`Вы выбрали: <b>${selectedDay} ${monthsRus[currentMonthIndex]}</b> — <b>${selectedTime}</b>`;
-
-document.getElementById("form").style.display="block";
+function showSummary() {
+    if(selectedD && selectedT) {
+        const summary = document.getElementById('selection-summary');
+        summary.classList.remove('hidden');
+        summary.innerText = `Выбрано: ${selectedD} | ${selectedT}`;
+    }
 }
 
-document.getElementById("people").addEventListener("input",function(){
-let total=this.value*6;
-document.getElementById("price").innerText=
-"Сумма к оплате: "+total+" $";
-});
+function openBookingForm() {
+    if(!selectedD || !selectedT) return alert("Пожалуйста, выберите дату и время!");
+    document.getElementById('form-section').classList.remove('hidden');
+    window.scrollTo(0, document.body.scrollHeight);
+}
 
-renderCalendar();
+function updateTotal() {
+    const count = document.getElementById('inp-pax').value || 0;
+    document.getElementById('total-val').innerText = count * 6;
+}
 
+function finalizeBooking() {
+    const name = document.getElementById('inp-name').value;
+    if(!name) return alert("Введите ваше имя!");
+
+    document.getElementById('v-id').innerText = "VCH-" + Math.floor(100000 + Math.random() * 900000);
+    document.getElementById('v-dt').innerText = `${selectedD} / ${selectedT}`;
+    document.getElementById('v-name').innerText = name;
+    document.getElementById('v-hotel').innerText = document.getElementById('inp-hotel').value;
+    document.getElementById('v-tg').innerText = document.getElementById('inp-tg').value || "-";
+
+    document.getElementById('calendar-section').classList.add('hidden');
+    document.getElementById('form-section').classList.add('hidden');
+    document.getElementById('voucher-section').classList.remove('hidden');
+}
+
+function payWithCrypto() { alert("Перенаправление на Crypto Bot (TON/USDT wallet)..."); }
+
+renderDays();
 </script>
 </body>
 </html>
