@@ -13,15 +13,15 @@
         }
         body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
         .orange-header { background-color: var(--accent-orange); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 20px; border-radius: 12px 12px 0 0; text-transform: uppercase; }
-        .month-btn { background-color: var(--primary-blue); color: white; padding: 6px; border-radius: 5px; font-size: 12px; transition: 0.3s; width: 100%; cursor: pointer; }
+        .month-btn { background-color: var(--primary-blue); color: white; padding: 6px; border-radius: 5px; font-size: 12px; transition: 0.3s; width: 100%; cursor: pointer; border: none; }
         .month-btn:hover { background-color: var(--success-green); }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; font-size: 14px; }
-        .day-cell { padding: 8px; cursor: pointer; border-radius: 5px; transition: 0.2s; }
+        .day-cell { padding: 8px; cursor: pointer; border-radius: 5px; transition: 0.2s; background: #fff; }
         .day-cell:hover { background-color: #e2e8f0; }
         .selected-day { background-color: var(--success-green) !important; color: white; }
         .activity-btn { background-color: var(--accent-orange); color: white; padding: 12px; border-radius: 8px; font-weight: bold; transition: 0.3s; width: 100%; cursor: pointer; }
         .activity-btn.active { background-color: var(--success-green); }
-        .confirm-btn { background-color: var(--success-green); color: white; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; margin-top: 20px; cursor: pointer; }
+        .confirm-btn { background-color: var(--success-green); color: white; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; margin-top: 20px; cursor: pointer; border: none; }
         .voucher-box { border: 2px dashed var(--primary-blue); padding: 15px; background: white; border-radius: 10px; position: relative; }
         .hidden { display: none; }
     </style>
@@ -62,19 +62,19 @@
     </div>
 
     <div id="form-section" class="p-5 hidden border-t">
-        <h3 class="text-center font-bold text-gray-700 mb-4 font-uppercase">Данные для ваучера</h3>
+        <h3 class="text-center font-bold text-gray-700 mb-4 uppercase">Данные для ваучера</h3>
         <div class="space-y-3">
-            <input type="text" id="inp-name" placeholder="Имя и Фамилия" class="w-full border p-3 rounded-lg">
-            <input type="text" id="inp-hotel" placeholder="Название отеля / Адрес" class="w-full border p-3 rounded-lg">
-            <input type="text" id="inp-tg" placeholder="Ваш Telegram (@username)" class="w-full border p-3 rounded-lg">
-            <input type="tel" id="inp-phone" placeholder="Контактный номер" class="w-full border p-3 rounded-lg">
-            <input type="number" id="inp-pax" placeholder="Количество человек" class="w-full border p-3 rounded-lg" oninput="updateTotal()">
+            <input type="text" id="inp-name" placeholder="Имя и Фамилия" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
+            <input type="text" id="inp-hotel" placeholder="Название отеля / Адрес" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
+            <input type="text" id="inp-tg" placeholder="Ваш Telegram (@username)" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
+            <input type="tel" id="inp-phone" placeholder="Контактный номер" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
+            <input type="number" id="inp-pax" placeholder="Количество человек" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500" oninput="updateTotal()">
             
             <div class="text-xl font-bold text-right text-blue-900 border-t pt-2">
                 Сбор за консультацию: <span id="total-val">0</span> $
             </div>
 
-            <button onclick="finalizeBooking()" class="orange-header w-full rounded-lg mt-2 cursor-pointer">Создать ваучер</button>
+            <button onclick="finalizeBooking()" class="orange-header w-full rounded-lg mt-2 cursor-pointer border-none">Создать ваучер</button>
         </div>
     </div>
 
@@ -90,14 +90,14 @@
                 <p><strong>Отель:</strong> <span id="v-hotel"></span></p>
                 <p><strong>Telegram:</strong> <span id="v-tg"></span></p>
             </div>
-            <div class="mt-4 text-center text-red-600 font-bold border-t pt-2 animate-pulse font-uppercase">ОЖИДАЕТСЯ ОПЛАТА</div>
+            <div class="mt-4 text-center text-red-600 font-bold border-t pt-2 animate-pulse uppercase">ОЖИДАЕТСЯ ОПЛАТА</div>
         </div>
-        <button onclick="payWithCrypto()" class="confirm-btn mt-5">Оплатить через Crypto (TON/USDT)</button>
+        <button onclick="payWithCrypto()" class="confirm-btn mt-5 uppercase">Оплатить через Crypto (TON/USDT)</button>
     </div>
 </div>
 
 <script>
-// --- KONFİGÜRASYON ---
+// --- AYARLAR ---
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmEsd7VVPRqc6HohudQUwGReoD8eLGQNW-1HmjxlxvIvJdbtuU2v-rcndgYNLdWRmxLA/exec";
 const MY_WALLET = "UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv";
 
@@ -144,6 +144,8 @@ function finalizeBooking() {
 
     if(!data.name || !data.pax) return alert("Заполните имя и количество человек!");
 
+    const vID = "VCH-" + Math.floor(100000 + Math.random() * 900000);
+
     // GOOGLE SHEETS'E GÖNDERME
     fetch(SCRIPT_URL, {
         method: "POST",
@@ -155,12 +157,12 @@ function finalizeBooking() {
             hotel: data.hotel,
             telegram: data.tg,
             phone: data.phone,
-            count: data.pax
+            count: data.pax,
+            voucherId: vID
         })
     });
 
     // VOUCHER GÖSTERME
-    const vID = "VCH-" + Math.floor(100000 + Math.random() * 900000);
     document.getElementById('v-id').innerText = vID;
     document.getElementById('v-dt').innerText = `${selectedD} / ${selectedT}`;
     document.getElementById('v-name').innerText = data.name;
@@ -177,12 +179,7 @@ function payWithCrypto() {
     const vID = document.getElementById('v-id').innerText;
     
     navigator.clipboard.writeText(MY_WALLET).then(() => {
-        alert("Адрес скопирован: " + MY_WALLET + "\nСумма: " + amount + "$\nПосле оплаты отправьте скриншот в Telegram.");
-        window.location.href = `ton://transfer/${MY_WALLET}?text=Booking_${vID}`;
-    });
-}
-
-renderDays();
-</script>
-</body>
-</html>
+        alert("Адрес скопирован: " + MY_WALLET + "\nСумма: " + amount + "$\n\nПосле нажатия OK откроется кошелек.");
+        
+        // Evrensel TON linki - Cüzdanı otomatik tetikler
+        const
