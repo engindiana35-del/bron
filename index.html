@@ -75,7 +75,7 @@
 
         <div class="flex justify-between items-center py-2 border-y mb-2">
             <button onclick="changeMonth(-1)" class="text-blue-600 font-bold text-xl px-2">&lt;</button>
-            <span id="month-year-display" class="font-bold text-blue-900">Июль 2026</span>
+            <span id="month-year-display" class="font-bold text-blue-900">Март 2026</span>
             <button onclick="changeMonth(1)" class="text-blue-600 font-bold text-xl px-2">&gt;</button>
         </div>
 
@@ -133,16 +133,19 @@
                 <p><strong>Telegram:</strong> <span id="v-tg"></span></p>
                 <p><strong>Связь:</strong> +90 553 523 51 35</p>
             </div>
-            <div class="mt-4 text-center text-red-600 font-bold border-t pt-2 animate-pulse">ОЖИДАЕТСЯ ОПЛАТА</div>
+            <div class="mt-4 text-center text-red-600 font-bold border-t pt-2 animate-pulse">ОЖИДАЕТСЯ ОПЛАТA</div>
         </div>
-        <button onclick="payWithCrypto()" class="confirm-btn mt-5">Перейти к оплате (Crypto)</button>
+        <button onclick="payWithCrypto()" class="confirm-btn mt-5">Перейти к оплате (TON)</button>
     </div>
 </div>
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmEsd7VVPRqc6HohudQUwGReoD8eLGQNW-1HmjxlxvIvJdbtuU2v-rcndgYNLdWRmxLA/exec";
 const rusMonths = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
-let currentM = 6; let currentY = 2026; let selectedD = null; let selectedT = null;
+let currentM = 2; // Mart 2026'ya ayarlandı
+let currentY = 2026; 
+let selectedD = null; 
+let selectedT = null;
 
 function renderDays() {
     document.getElementById('month-year-display').innerText = `${rusMonths[currentM]} ${currentY}`;
@@ -211,30 +214,24 @@ function finalizeBooking() {
     document.getElementById('voucher-section').classList.remove('hidden');
 }
 
-function payWithCrypto() { alert("Redirecting to payment..."); }
-renderDays();
-</script
-    </script>
-
-<script>
+// KRİPTO ÖDEME FONKSİYONU
 window.payWithCrypto = function () {
-
     let pax = document.getElementById("inp-pax").value || 0;
+    if (pax == 0) return alert("Hata: Kişi sayısı 0 olamaz.");
 
     let totalUSD = pax * 6;
-
-    let ton = totalUSD / 6;
-
-    let nano = Math.floor(ton * 1000000000);
-
+    // TON kuru 1 USD = 1 TON varsayımıyla (veya istediğiniz kurla güncelleyebilirsiniz)
+    let tonAmount = totalUSD / 6; 
+    let nano = Math.floor(tonAmount * 1000000000);
     let wallet = "UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv";
-
+    
+    // TON Transfer Linki
     let url = "ton://transfer/" + wallet + "?amount=" + nano + "&text=HorseTour";
-
+    
     window.location.href = url;
-
 };
+
+renderDays();
 </script>
 </body>
 </html>
-
