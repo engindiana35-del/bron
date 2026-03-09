@@ -4,48 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E-TravelClub Бронирование</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        :root { 
-            --accent-orange: #ff8c00; 
-            --primary-blue: #007bff;
-            --success-green: #28a745;
-        }
+        :root { --accent-orange: #ff8c00; --primary-blue: #007bff; --success-green: #28a745; }
         body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
         .orange-header { background-color: var(--accent-orange); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 20px; border-radius: 12px 12px 0 0; text-transform: uppercase; }
-        .month-btn { 
-            background-color: var(--primary-blue); 
-            color: white; 
-            padding: 6px; 
-            border-radius: 5px; 
-            font-size: 12px; 
-            transition: 0.3s; 
-            width: 100%;
-            cursor: pointer;
-        }
-        .month-btn:hover { 
-            background-color: var(--success-green); 
-            color: white;
-        }
+        .month-btn { background-color: var(--primary-blue); color: white; padding: 6px; border-radius: 5px; font-size: 12px; transition: 0.3s; width: 100%; cursor: pointer; }
+        .month-btn:hover { background-color: var(--success-green); }
         .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; font-size: 14px; }
         .day-cell { padding: 8px; cursor: pointer; border-radius: 5px; transition: 0.2s; }
         .day-cell:hover { background-color: #e2e8f0; }
-        .day-cell.disabled { background-color: #f0f0f0; color: #999; cursor: default; }
         .selected-day { background-color: var(--success-green) !important; color: white; }
-        .activity-btn { 
-            background-color: var(--accent-orange); 
-            color: white; 
-            padding: 12px; 
-            border-radius: 8px; 
-            font-weight: bold; 
-            transition: 0.3s; 
-            border: none;
-            width: 100%;
-            cursor: pointer;
-        }
-        .activity-btn:hover, .activity-btn.active { 
-            background-color: var(--success-green); 
-        }
+        .activity-btn { background-color: var(--accent-orange); color: white; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; }
+        .activity-btn.active { background-color: var(--success-green); }
         .confirm-btn { background-color: var(--success-green); color: white; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; margin-top: 20px; cursor: pointer; }
         .voucher-box { border: 2px dashed var(--primary-blue); padding: 15px; background: white; border-radius: 10px; position: relative; }
         .hidden { display: none; }
@@ -59,24 +31,20 @@
     <div id="calendar-section" class="p-5">
         <p class="text-sm font-semibold text-gray-600 mb-3">Выберите месяц и день:</p>
         <div class="grid grid-cols-4 gap-2 mb-4">
-            <button class="month-btn" onclick="jumpToMonth(0)">Январь</button>
-            <button class="month-btn" onclick="jumpToMonth(1)">Февраль</button>
-            <button class="month-btn" onclick="jumpToMonth(2)">Март</button>
-            <button class="month-btn" onclick="jumpToMonth(3)">Апрель</button>
+            <button class="month-btn" onclick="jumpToMonth(0)">Янв</button>
+            <button class="month-btn" onclick="jumpToMonth(1)">Фев</button>
+            <button class="month-btn" onclick="jumpToMonth(2)">Мар</button>
+            <button class="month-btn" onclick="jumpToMonth(3)">Апр</button>
             <button class="month-btn" onclick="jumpToMonth(4)">Май</button>
-            <button class="month-btn" onclick="jumpToMonth(5)">Июнь</button>
-            <button class="month-btn" onclick="jumpToMonth(6)">Июль</button>
-            <button class="month-btn" onclick="jumpToMonth(7)">Август</button>
-            <button class="month-btn" onclick="jumpToMonth(8)">Сентябрь</button>
-            <button class="month-btn" onclick="jumpToMonth(9)">Октябрь</button>
-            <button class="month-btn" onclick="jumpToMonth(10)">Ноябрь</button>
-            <button class="month-btn" onclick="jumpToMonth(11)">Декабрь</button>
+            <button class="month-btn" onclick="jumpToMonth(5)">Июн</button>
+            <button class="month-btn" onclick="jumpToMonth(6)">Июл</button>
+            <button class="month-btn" onclick="jumpToMonth(7)">Авг</button>
         </div>
 
         <div class="flex justify-between items-center py-2 border-y mb-2">
-            <button onclick="changeMonth(-1)" class="text-blue-600 font-bold text-xl px-2">&lt;</button>
-            <span id="month-year-display" class="font-bold text-blue-900">Март 2026</span>
-            <button onclick="changeMonth(1)" class="text-blue-600 font-bold text-xl px-2">&gt;</button>
+            <button onclick="changeMonth(-1)" class="font-bold text-xl px-2"> &lt; </button>
+            <span id="month-year-display" class="font-bold text-blue-900"></span>
+            <button onclick="changeMonth(1)" class="font-bold text-xl px-2"> &gt; </button>
         </div>
 
         <div class="calendar-grid text-gray-400 font-bold mb-1">
@@ -91,147 +59,11 @@
         </div>
 
         <div id="selection-summary" class="mt-4 p-3 bg-blue-50 text-blue-800 text-sm rounded-lg hidden text-center"></div>
-
         <button onclick="openBookingForm()" class="confirm-btn uppercase">Подтвердить ✓</button>
     </div>
 
     <div id="form-section" class="p-5 hidden border-t">
         <h3 class="text-center font-bold text-gray-700 mb-4">Форма бронирования</h3>
         <div class="space-y-3">
-            <input type="text" id="inp-name" placeholder="Имя и Фамилия" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
-            <input type="text" id="inp-hotel" placeholder="Название отеля veya адрес проживания" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
-            <input type="text" id="inp-tg" placeholder="Ваш Telegram (ссылка veya @username)" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
-            <input type="tel" id="inp-phone" placeholder="Контактный номер" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
-            <input type="number" id="inp-pax" placeholder="Количество человек" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500" oninput="updateTotal()">
-            
-            <div class="bg-orange-50 p-3 text-xs text-orange-800 rounded-lg border border-orange-200 italic">
-                Уведомление: Мы не берем плату за консультацию с детей 12 лет и младше.
-            </div>
-
-            <div class="text-xl font-bold text-right text-blue-900 border-t pt-2">
-                Общая сумма: <span id="total-val">0</span> $
-            </div>
-
-            <p class="text-[10px] text-gray-500 leading-tight">
-                * Этот сбор покрывает услуги консультации. Фактическую цену агентства вы оплатите наличными на месте.
-            </p>
-
-            <button onclick="finalizeBooking()" class="orange-header w-full rounded-lg mt-2 cursor-pointer">Создать ваучер</button>
-        </div>
-    </div>
-
-    <div id="voucher-section" class="p-5 hidden">
-        <div class="voucher-box">
-            <div class="absolute top-2 right-2 text-blue-600 font-black text-xs">E-TRAVELCLUB</div>
-            <h4 class="font-bold border-b pb-2 mb-3 text-gray-800">ОНЛАЙН ВАУЧЕР</h4>
-            <div class="text-sm space-y-2 text-gray-700">
-                <p><strong>Номер:</strong> <span id="v-id"></span></p>
-                <p><strong>Услуга:</strong> Конная прогулка</p>
-                <p><strong>Дата/Время:</strong> <span id="v-dt"></span></p>
-                <p><strong>Клиент:</strong> <span id="v-name"></span></p>
-                <p><strong>Отель:</strong> <span id="v-hotel"></span></p>
-                <p><strong>Telegram:</strong> <span id="v-tg"></span></p>
-                <p><strong>Связь:</strong> +90 553 523 51 35</p>
-            </div>
-            <div class="mt-4 text-center text-red-600 font-bold border-t pt-2 animate-pulse">ОЖИДАЕТСЯ ОПЛАТA</div>
-        </div>
-        <button onclick="payWithCrypto()" class="confirm-btn mt-5">Перейти к оплате (TON)</button>
-    </div>
-</div>
-
-<script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmEsd7VVPRqc6HohudQUwGReoD8eLGQNW-1HmjxlxvIvJdbtuU2v-rcndgYNLdWRmxLA/exec";
-const rusMonths = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
-let currentM = 2; // Mart 2026'ya ayarlandı
-let currentY = 2026; 
-let selectedD = null; 
-let selectedT = null;
-
-function renderDays() {
-    document.getElementById('month-year-display').innerText = `${rusMonths[currentM]} ${currentY}`;
-    const grid = document.getElementById('days-grid');
-    grid.innerHTML = '';
-    const firstDay = new Date(currentY, currentM, 1).getDay();
-    const offset = (firstDay === 0) ? 6 : firstDay - 1;
-    for(let i=0; i<offset; i++) grid.innerHTML += '<div></div>';
-    const totalDays = new Date(currentY, currentM+1, 0).getDate();
-    for(let d=1; d<=totalDays; d++) {
-        let cell = document.createElement('div');
-        cell.innerText = d;
-        cell.className = 'day-cell';
-        cell.onclick = () => {
-            document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected-day'));
-            cell.classList.add('selected-day');
-            selectedD = `${d} ${rusMonths[currentM]} ${currentY}`;
-            showSummary();
-        };
-        grid.appendChild(cell);
-    }
-}
-
-function changeMonth(dir) { currentM += dir; if(currentM>11){currentM=0;currentY++} if(currentM<0){currentM=11;currentY--} renderDays(); }
-function jumpToMonth(m) { currentM = m; renderDays(); }
-function setActivityTime(time, btn) { selectedT = time; document.querySelectorAll('.activity-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); showSummary(); }
-function showSummary() { if(selectedD && selectedT) { const s = document.getElementById('selection-summary'); s.classList.remove('hidden'); s.innerText = `Выбрано: ${selectedD} | ${selectedT}`; } }
-function openBookingForm() { if(!selectedD || !selectedT) return alert("Выберите дату и время!"); document.getElementById('form-section').classList.remove('hidden'); }
-function updateTotal() { document.getElementById('total-val').innerText = (document.getElementById('inp-pax').value || 0) * 6; }
-
-function finalizeBooking() {
-    const data = {
-        name: document.getElementById('inp-name').value,
-        hotel: document.getElementById('inp-hotel').value,
-        tg: document.getElementById('inp-tg').value,
-        phone: document.getElementById('inp-phone').value,
-        pax: document.getElementById('inp-pax').value
-    };
-
-    if(!data.name || !data.pax) return alert("Заполните форму!");
-
-    // SHEETS'E GÖNDER
-    fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        body: JSON.stringify({
-            service: "Конная прогулка",
-            datetime: `${selectedD} / ${selectedT}`,
-            client: data.name,
-            hotel: data.hotel,
-            telegram: data.tg,
-            phone: data.phone,
-            count: data.pax
-        })
-    }).then(() => console.log("Sent!"));
-
-    // VOUCHER GÖSTER
-    document.getElementById('v-id').innerText = "VCH-" + Math.floor(100000 + Math.random() * 900000);
-    document.getElementById('v-dt').innerText = `${selectedD} / ${selectedT}`;
-    document.getElementById('v-name').innerText = data.name;
-    document.getElementById('v-hotel').innerText = data.hotel;
-    document.getElementById('v-tg').innerText = data.tg || "-";
-
-    document.getElementById('calendar-section').classList.add('hidden');
-    document.getElementById('form-section').classList.add('hidden');
-    document.getElementById('voucher-section').classList.remove('hidden');
-}
-
-// KRİPTO ÖDEME FONKSİYONU
-window.payWithCrypto = function () {
-    let pax = document.getElementById("inp-pax").value || 0;
-    if (pax == 0) return alert("Hata: Kişi sayısı 0 olamaz.");
-
-    let totalUSD = pax * 6;
-    // TON kuru 1 USD = 1 TON varsayımıyla (veya istediğiniz kurla güncelleyebilirsiniz)
-    let tonAmount = totalUSD / 6; 
-    let nano = Math.floor(tonAmount * 1000000000);
-    let wallet = "UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv";
-    
-    // TON Transfer Linki
-    let url = "ton://transfer/" + wallet + "?amount=" + nano + "&text=HorseTour";
-    
-    window.location.href = url;
-};
-
-renderDays();
-</script>
-</body>
-</html>
+            <input type="text" id="inp-name" placeholder="Имя и Фамилия" class="w-full border p-3 rounded-lg outline-none">
+            <input type="
