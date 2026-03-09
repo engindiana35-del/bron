@@ -141,8 +141,6 @@
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxmEsd7VVPRqc6HohudQUwGReoD8eLGQNW-1HmjxlxvIvJdbtuU2v-rcndgYNLdWRmxLA/exec";
-const CRYPTO_LINK = "https://nowpayments.io/payment/?iid=UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv";
-
 const rusMonths = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
 let currentM = 6; let currentY = 2026; let selectedD = null; let selectedT = null;
 
@@ -186,7 +184,7 @@ function finalizeBooking() {
 
     if(!data.name || !data.pax) return alert("Заполните форму!");
 
-    // Google Sheets'e gönder
+    // SHEETS'E GÖNDER
     fetch(SCRIPT_URL, {
         method: "POST",
         mode: "no-cors",
@@ -201,7 +199,7 @@ function finalizeBooking() {
         })
     }).then(() => console.log("Sent!"));
 
-    // Voucher göster
+    // VOUCHER GÖSTER
     document.getElementById('v-id').innerText = "VCH-" + Math.floor(100000 + Math.random() * 900000);
     document.getElementById('v-dt').innerText = `${selectedD} / ${selectedT}`;
     document.getElementById('v-name').innerText = data.name;
@@ -213,12 +211,29 @@ function finalizeBooking() {
     document.getElementById('voucher-section').classList.remove('hidden');
 }
 
-// Kripto ödeme yönlendirme
-function payWithCrypto() { 
-    window.location.href = CRYPTO_LINK;
-}
-
+function payWithCrypto() { alert("Redirecting to payment..."); }
 renderDays();
 </script>
 </body>
 </html>
+<script>
+
+document.querySelector(".paybtn").addEventListener("click", function(){
+
+let pax=document.getElementById("pax").value;
+
+let totalUSD=pax*6;
+
+let ton=totalUSD/6;
+
+let nano=Math.floor(ton*1000000000);
+
+let wallet="UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv";
+
+let url="ton://transfer/"+wallet+"?amount="+nano+"&text=HorseTour";
+
+window.location.href=url;
+
+});
+
+</script>
