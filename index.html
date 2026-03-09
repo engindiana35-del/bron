@@ -213,27 +213,28 @@ function finalizeBooking() {
 
 function payWithCrypto() { alert("Redirecting to payment..."); }
 renderDays();
+</script
+    </script>
+
+<script>
+window.payWithCrypto = function () {
+
+    let pax = document.getElementById("inp-pax").value || 0;
+
+    let totalUSD = pax * 6;
+
+    let ton = totalUSD / 6;
+
+    let nano = Math.floor(ton * 1000000000);
+
+    let wallet = "UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv";
+
+    let url = "ton://transfer/" + wallet + "?amount=" + nano + "&text=HorseTour";
+
+    window.location.href = url;
+
+};
 </script>
 </body>
 </html>
-<script>
 
-document.querySelector(".paybtn").addEventListener("click", function(){
-
-let pax=document.getElementById("pax").value;
-
-let totalUSD=pax*6;
-
-let ton=totalUSD/6;
-
-let nano=Math.floor(ton*1000000000);
-
-let wallet="UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv";
-
-let url="ton://transfer/"+wallet+"?amount="+nano+"&text=HorseTour";
-
-window.location.href=url;
-
-});
-
-</script>
