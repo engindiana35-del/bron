@@ -55,7 +55,7 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
 <body class="p-4 flex justify-center">
 
 <div id="main-app" class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
-    <div class="orange-header">БРОНИРОВАНИЕ</div>
+    <div class="orange-header" id="activity-title">БРОНИРОВАНИЕ</div>
 
     <div id="calendar-section" class="p-5">
         <p class="text-sm font-semibold text-gray-600 mb-3">Выберите месяц и день:</p>
@@ -115,6 +115,7 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
             <h4 class="font-bold border-b pb-2 mb-3 text-gray-800 text-center">ОНЛАЙН ВАУЧЕР</h4>
             <div class="text-sm space-y-2 text-gray-700 text-center">
                 <p><strong>Номер:</strong> <span id="v-id"></span></p>
+                <p><strong>Услуга:</strong> <span id="v-act"></span></p>
                 <p><strong>Дата/Время:</strong> <span id="v-dt"></span></p>
                 <p><strong>Клиент:</strong> <span id="v-name"></span></p>
                 <p><strong>К-во человек:</strong> <span id="v-pax"></span></p>
@@ -122,35 +123,38 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
             </div>
             <div class="mt-4 text-center text-red-600 font-bold border-t pt-2 animate-pulse">ОЖИДАЕТСЯ ОПЛАТА</div>
         </div>
-        <button onclick="alert('Переход к оплате...')" class="confirm-btn mt-5">Перейти к оплате (Crypto)</button>
+        <button onclick="startCryptoPayment()" class="confirm-btn mt-5">Перейти к оплате (Crypto)</button>
     </div>
 </div>
 
 <script>
-// YENİ URL GÜNCELENDİ
 const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxg4r40tkkLQ-0QOF5Fzb54NvqVY0eo25vURQRG5w_-SJkWM3lYoIshZT5gorI6QhsAkA/exec";
+const MY_WALLET = "UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv"; // Senin Cüzdanın
 const rusMonths = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
 
-let currentM = 2; // Mart 2026 (Bugünkü aya göre güncellendi)
+// DEEP LINK ANALİZİ
+const urlParams = new URLSearchParams(window.location.search);
+const activityFromUrl = urlParams.get('act') ? urlParams.get('act').replace(/_/g, ' ') : "Конная прогулка";
+const priceFromUrl = parseFloat(urlParams.get('price')) || 6;
+
+let currentM = new Date().getMonth();
 let currentY = 2026;
 let selectedD = null;
 let selectedT = null;
+
+window.onload = function() {
+    document.getElementById('activity-title').innerText = activityFromUrl.toUpperCase();
+    renderDays();
+};
 
 function renderDays() {
     document.getElementById('month-year-display').innerText = `${rusMonths[currentM]} ${currentY}`;
     const grid = document.getElementById('days-grid');
     grid.innerHTML = '';
-
     let firstDay = new Date(currentY, currentM, 1).getDay();
     let offset = (firstDay === 0) ? 6 : firstDay - 1;
-
-    for(let i=0; i<offset; i++) {
-        let emptyDiv = document.createElement('div');
-        grid.appendChild(emptyDiv);
-    }
-
+    for(let i=0; i<offset; i++) { grid.appendChild(document.createElement('div')); }
     const totalDays = new Date(currentY, currentM + 1, 0).getDate();
-
     for(let d=1; d<=totalDays; d++) {
         let cell = document.createElement('div');
         cell.innerText = d;
@@ -169,40 +173,38 @@ function changeMonth(dir) { currentM += dir; if(currentM > 11) { currentM = 0; c
 function jumpToMonth(m) { currentM = m; renderDays(); }
 function setActivityTime(t, b) { selectedT = t; document.querySelectorAll('.activity-btn').forEach(btn => btn.classList.remove('active')); b.classList.add('active'); showSummary(); }
 function showSummary() { if(selectedD && selectedT) { const s = document.getElementById('selection-summary'); s.classList.remove('hidden'); s.innerText = `Выбрано: ${selectedD} | ${selectedT}`; } }
-function openBookingForm() { if(!selectedD || !selectedT) return alert("Пожалуйста, выберите дату и время!"); document.getElementById('form-section').classList.remove('hidden'); }
-function updateTotal() { document.getElementById('total-val').innerText = (document.getElementById('inp-pax').value || 0) * 6; }
+function openBookingForm() { if(!selectedD || !selectedT) return alert("Пожалуйста, выберите дату!"); document.getElementById('form-section').classList.remove('hidden'); }
+function updateTotal() { document.getElementById('total-val').innerText = (document.getElementById('inp-pax').value || 0) * priceFromUrl; }
 
 async function finalizeBooking() {
     const name = document.getElementById('inp-name').value;
     const hotel = document.getElementById('inp-hotel').value;
     const tg = document.getElementById('inp-tg').value || "-";
     const pax = document.getElementById('inp-pax').value || "1";
-    
-    if(!name || !hotel) return alert("Введите данные!");
+    if(!name || !hotel) return alert("Заполните форму!");
 
     const vNumber = "VCH-" + Math.floor(100000 + Math.random() * 900000);
     const vDate = `${selectedD} / ${selectedT}`;
 
-    // Voucher ekranını doldur
     document.getElementById('v-id').innerText = vNumber;
+    document.getElementById('v-act').innerText = activityFromUrl;
     document.getElementById('v-dt').innerText = vDate;
     document.getElementById('v-name').innerText = name;
-    document.getElementById('v-pax').innerText = pax; // Eklenen satır
+    document.getElementById('v-pax').innerText = pax;
     document.getElementById('v-hotel').innerText = hotel;
 
     document.getElementById('calendar-section').classList.add('hidden');
     document.getElementById('form-section').classList.add('hidden');
     document.getElementById('voucher-section').classList.remove('hidden');
 
-    // Google Sheets'e gönder
     fetch(GOOGLE_URL, {
         method: 'POST',
         mode: 'no-cors',
         body: JSON.stringify({
             "Номер": vNumber,
-            "Услуга": "Конная прогулка",
+            "Услуга": activityFromUrl,
             "Дата/Время": vDate,
-            "Количество человек": pax, // Google Script'teki yeni sütuna gider
+            "Количество человек": pax,
             "Клиент": name,
             "Название отеля": hotel,
             "Ваш Telegram": tg
@@ -210,7 +212,20 @@ async function finalizeBooking() {
     });
 }
 
-renderDays();
+// TON DEEP LINK ÖDEME TETİKLEYİCİ
+function startCryptoPayment() {
+    const pax = document.getElementById('inp-pax').value || 1;
+    const totalAmount = pax * priceFromUrl;
+    const comment = document.getElementById('v-id').innerText;
+    
+    // TON birimi Nanoton (10^9) üzerinden hesaplanır. Örn: 1 TON = 1,000,000,000 Nanoton
+    const nanoAmount = totalAmount * 1000000000; 
+
+    const tonLink = `ton://transfer/${MY_WALLET}?amount=${nanoAmount}&text=${encodeURIComponent(comment)}`;
+    
+    // Mobil cihazda cüzdanı açar
+    window.location.href = tonLink;
+}
 </script>
 </body>
 </html>
