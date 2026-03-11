@@ -89,7 +89,7 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
 </div>
 
 <script>
-const SHEET_API = "https://script.google.com/macros/s/AKfycbxfMBXrl3HU66tF49xFf0BlIvLMDUjPXdkW7VcFCiPSldZe5z9EVakO17jCQ4Ni9iCKuQ/exec"; // Google Apps Script URL
+const SHEET_API = "https://script.google.com/macros/s/AKfycbxxxxxxxxxxxxxx/exec"; // Buraya Web App URL’ini yapıştırdım
 const WALLET  = "UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv";
 const rusMonths = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
 let currentM=6, currentY=2026, selectedD=null, selectedT=null;
@@ -140,7 +140,7 @@ document.getElementById('v-hotel').innerText=hotel;
 document.getElementById('v-tg').innerText=tg||"-";
 document.getElementById('v-phone').innerText=phone||"-";
 
-saveReservation({service:"Конная прогулка", datetime:`${selectedD} / ${selectedT}`, client:name, hotel, telegram:tg, phone, count:pax, price, voucher});
+saveReservation({date:selectedD,time:selectedT,name,hotel,tg,phone,pax,price,voucher});
 document.getElementById('calendar-section').classList.add('hidden');document.getElementById('form-section').classList.add('hidden');document.getElementById('voucher-section').classList.remove('hidden');
 }
 
