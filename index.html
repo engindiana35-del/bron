@@ -67,7 +67,6 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
 
 <div id="voucher-section" class="p-5 hidden">
 <div class="voucher-box">
-<div class="absolute top-2 right-2 text-blue-600 font-black text-xs uppercase">E-TRAVELCLUB</div>
 <h4 class="font-bold border-b pb-2 mb-3 text-gray-800">ОНЛАЙН ВАУЧЕР</h4>
 <div class="text-sm space-y-2 text-gray-700">
 <p><strong>Voucher:</strong> <span id="v-id"></span></p>
@@ -85,10 +84,7 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
 
 <script>
 const WALLET = "UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv";
-const TELEGRAM_BOT_TOKEN = "8211449067:AAFJ_Tb52RDBr9zutqOfLF0Z6uCMLB1ah2U";
-const ADMIN_CHAT_ID = "@rezervasyonlar"; // Telegram kanal username’i
-
-const rusMonths = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
+let rusMonths = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
 let currentM=6, currentY=2026, selectedD=null, selectedT=null;
 
 function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
@@ -124,18 +120,7 @@ function showSummary(){ if(selectedD && selectedT){ document.getElementById('sel
 function openBookingForm(){ if(!selectedD || !selectedT) return alert("Выберите дату и время!"); document.getElementById('form-section').classList.remove('hidden'); }
 function updateTotal(){ let cnt = parseInt(document.getElementById('inp-pax').value) || 0; document.getElementById('total-val').innerText = cnt * 6; }
 
-function sendVoucherToTelegram(){
-const voucherDiv = document.querySelector("#voucher-section .voucher-box");
-html2canvas(voucherDiv).then(canvas => {
-canvas.toBlob(blob => {
-const formData = new FormData();
-formData.append("photo", blob, "voucher.png");
-formData.append("chat_id", ADMIN_CHAT_ID);
-fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendPhoto`, { method: "POST", body: formData })
-.then(res => console.log("Voucher Telegram kanalına gönderildi!"));
-});
-});
-}
+function sendVoucherToTelegram(){ /* Telegram kaldırıldı */ }
 
 function finalizeBooking(){
 const name = document.getElementById('inp-name').value; 
@@ -152,7 +137,6 @@ document.getElementById('v-tg').innerText = tg || "-";
 document.getElementById('calendar-section').classList.add('hidden');
 document.getElementById('form-section').classList.add('hidden');
 document.getElementById('voucher-section').classList.remove('hidden');
-sendVoucherToTelegram();
 }
 
 function payWithCrypto() {
@@ -161,7 +145,6 @@ navigator.clipboard.writeText(WALLET).then(() => {
 alert("Адрес кошелька скопирован! Открываем Tonkeeper...");
 window.location.href = `https://tonkeeper.app/transfer/${WALLET}?text=${vID}`;
 });
-
 }
 
 renderDays();
