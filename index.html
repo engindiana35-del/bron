@@ -13,39 +13,13 @@
 }
 body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
 .orange-header { background-color: var(--accent-orange); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 20px; border-radius: 12px 12px 0 0; text-transform: uppercase; }
-.month-btn { 
-    background-color: var(--primary-blue); 
-    color: white; 
-    padding: 6px; 
-    border-radius: 5px; 
-    font-size: 11px; 
-    transition: 0.3s; 
-    width: 100%;
-    cursor: pointer;
-}
+.month-btn { background-color: var(--primary-blue); color: white; padding: 6px; border-radius: 5px; font-size: 11px; transition: 0.3s; width: 100%; cursor: pointer; }
 .month-btn:hover { background-color: var(--success-green); }
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; font-size: 14px; }
-.day-cell { 
-    padding: 10px 0; 
-    cursor: pointer; 
-    border-radius: 8px; 
-    transition: 0.2s; 
-    border: 1px solid #f0f0f0;
-    background-color: #fff;
-    color: #333;
-    font-weight: 500;
-}
+.day-cell { padding: 10px 0; cursor: pointer; border-radius: 8px; transition: 0.2s; border: 1px solid #f0f0f0; background-color: #fff; color: #333; font-weight: 500; }
 .day-cell:hover { background-color: #e2e8f0; }
 .selected-day { background-color: var(--success-green) !important; color: white !important; font-weight: bold; }
-.activity-btn { 
-    background-color: var(--accent-orange); 
-    color: white; 
-    padding: 12px; 
-    border-radius: 8px; 
-    font-weight: bold; 
-    width: 100%;
-    cursor: pointer;
-}
+.activity-btn { background-color: var(--accent-orange); color: white; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; }
 .activity-btn:hover, .activity-btn.active { background-color: var(--success-green); }
 .confirm-btn { background-color: var(--success-green); color: white; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; margin-top: 20px; cursor: pointer; }
 .voucher-box { border: 2px dashed var(--primary-blue); padding: 15px; background: white; border-radius: 10px; }
@@ -59,20 +33,13 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
 
     <div id="calendar-section" class="p-5">
         <p class="text-sm font-semibold text-gray-600 mb-3">Выберите месяц и день:</p>
-        
         <div class="grid grid-cols-4 gap-2 mb-4">
-            <button class="month-btn" onclick="jumpToMonth(0)">Янв</button>
-            <button class="month-btn" onclick="jumpToMonth(1)">Фев</button>
-            <button class="month-btn" onclick="jumpToMonth(2)">Мар</button>
-            <button class="month-btn" onclick="jumpToMonth(3)">Апр</button>
-            <button class="month-btn" onclick="jumpToMonth(4)">Май</button>
-            <button class="month-btn" onclick="jumpToMonth(5)">Июн</button>
-            <button class="month-btn" onclick="jumpToMonth(6)">Июл</button>
-            <button class="month-btn" onclick="jumpToMonth(7)">Авг</button>
-            <button class="month-btn" onclick="jumpToMonth(8)">Сен</button>
-            <button class="month-btn" onclick="jumpToMonth(9)">Окт</button>
-            <button class="month-btn" onclick="jumpToMonth(10)">Ноя</button>
-            <button class="month-btn" onclick="jumpToMonth(11)">Дек</button>
+            <script>
+                const shortMonths = ["Янв","Фев","Мар","Апр","Май","Июн","Июл","Авг","Сен","Окт","Ноя","Дек"];
+                shortMonths.forEach((m, idx) => {
+                    document.write(`<button class="month-btn" onclick="jumpToMonth(${idx})">${m}</button>`);
+                });
+            </script>
         </div>
 
         <div class="flex justify-between items-center py-2 border-y mb-2">
@@ -84,7 +51,6 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
         <div class="calendar-grid text-gray-400 font-bold mb-1">
             <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
         </div>
-        
         <div id="days-grid" class="calendar-grid"></div>
 
         <p class="text-sm font-semibold text-gray-600 mt-6 mb-3">Время активности:</p>
@@ -94,7 +60,6 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
         </div>
 
         <div id="selection-summary" class="mt-4 p-3 bg-blue-50 text-blue-800 text-sm rounded-lg hidden text-center"></div>
-
         <button onclick="openBookingForm()" class="confirm-btn uppercase">Подтвердить ✓</button>
     </div>
 
@@ -129,12 +94,20 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
 
 <script>
 const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxg4r40tkkLQ-0QOF5Fzb54NvqVY0eo25vURQRG5w_-SJkWM3lYoIshZT5gorI6QhsAkA/exec";
-const MY_WALLET = "UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv"; // Senin Cüzdanın
+const MY_WALLET = "UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv";
 const rusMonths = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
 
-// DEEP LINK ANALİZİ
+// 1. SÖZLÜK VE URL ANALİZİ
+const activityDictionary = {
+    "kapadokya_blue_tour": "Синий тур",
+    "kapadokya_red_tour": "Красный тур",
+    "kapadokya_green_tour": "Зеленый тур",
+    "at_turu": "Конная прогулка"
+};
+
 const urlParams = new URLSearchParams(window.location.search);
-const activityFromUrl = urlParams.get('act') ? urlParams.get('act').replace(/_/g, ' ') : "Конная прогулка";
+const rawAct = urlParams.get('act') || "at_turu";
+const activityFromUrl = activityDictionary[rawAct] || rawAct.replace(/_/g, ' ');
 const priceFromUrl = parseFloat(urlParams.get('price')) || 6;
 
 let currentM = new Date().getMonth();
@@ -142,10 +115,12 @@ let currentY = 2026;
 let selectedD = null;
 let selectedT = null;
 
-window.onload = function() {
+// SAYFA YÜKLENİNCE ÇALIŞAN ANA AYARLAR
+document.addEventListener("DOMContentLoaded", function() {
     document.getElementById('activity-title').innerText = activityFromUrl.toUpperCase();
     renderDays();
-};
+    updateTotal();
+});
 
 function renderDays() {
     document.getElementById('month-year-display').innerText = `${rusMonths[currentM]} ${currentY}`;
@@ -212,19 +187,11 @@ async function finalizeBooking() {
     });
 }
 
-// TON DEEP LINK ÖDEME TETİKLEYİCİ
 function startCryptoPayment() {
-    const pax = document.getElementById('inp-pax').value || 1;
-    const totalAmount = pax * priceFromUrl;
+    const totalAmount = (document.getElementById('inp-pax').value || 1) * priceFromUrl;
     const comment = document.getElementById('v-id').innerText;
-    
-    // TON birimi Nanoton (10^9) üzerinden hesaplanır. Örn: 1 TON = 1,000,000,000 Nanoton
     const nanoAmount = totalAmount * 1000000000; 
-
-    const tonLink = `ton://transfer/${MY_WALLET}?amount=${nanoAmount}&text=${encodeURIComponent(comment)}`;
-    
-    // Mobil cihazda cüzdanı açar
-    window.location.href = tonLink;
+    window.location.href = `ton://transfer/${MY_WALLET}?amount=${nanoAmount}&text=${encodeURIComponent(comment)}`;
 }
 </script>
 </body>
