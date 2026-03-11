@@ -1,152 +1,181 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>E-TravelClub Бронирование</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-:root { --accent-orange: #ff8c00; --primary-blue: #007bff; --success-green: #28a745; }
-body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
-.orange-header { background-color: var(--accent-orange); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 20px; border-radius: 12px 12px 0 0; text-transform: uppercase; }
-.month-btn { background-color: var(--primary-blue); color: white; padding: 6px; border-radius: 5px; font-size: 12px; transition: 0.3s; width: 100%; cursor: pointer; }
-.month-btn:hover { background-color: var(--success-green); }
-.calendar-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 5px; text-align: center; font-size: 14px; }
-.day-cell { padding: 8px; cursor: pointer; border-radius: 5px; transition: 0.2s; }
-.day-cell.disabled { background-color: #f0f0f0; color: #999; cursor: default; }
-.selected-day { background-color: var(--success-green) !important; color: white; }
-.activity-btn { background-color: var(--accent-orange); color: white; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; }
-.activity-btn.active, .activity-btn:hover { background-color: var(--success-green); }
-.confirm-btn { background-color: var(--success-green); color: white; padding: 14px; border-radius: 10px; width:100%; font-weight:bold; margin-top:20px; cursor:pointer;}
-.voucher-box { border:2px dashed var(--primary-blue); padding:15px; background:white; border-radius:10px; position:relative; }
-.hidden { display:none; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-TravelClub Бронирование</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root { --accent-orange: #ff8c00; --primary-blue: #007bff; --success-green: #28a745; }
+        body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
+        .orange-header { background-color: var(--accent-orange); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 20px; border-radius: 12px 12px 0 0; text-transform: uppercase; border: none; width: 100%; }
+        
+        /* TARİHLERİN GÖRÜNMESİ İÇİN CSS DÜZELTMESİ */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; font-size: 14px; }
+        .day-cell { 
+            padding: 10px 0; 
+            cursor: pointer; 
+            border-radius: 8px; 
+            background: white; 
+            color: #333; 
+            font-weight: bold; 
+            border: 1px solid #e2e8f0; 
+            transition: 0.2s;
+        }
+        .day-cell:hover { background-color: #f0f4f8; }
+        .day-cell.disabled { background-color: #f0f0f0; color: #999; cursor: default; border: 1px solid #ddd; }
+        .selected-day { background-color: var(--success-green) !important; color: white !important; border-color: var(--success-green); }
+        
+        .activity-btn { background-color: var(--accent-orange); color: white; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; border: none; transition: 0.3s; }
+        .activity-btn.active { background-color: var(--success-green); }
+        .confirm-btn { background-color: var(--success-green); color: white; padding: 14px; border-radius: 10px; width: 100%; font-weight: bold; margin-top: 20px; cursor: pointer; border: none; }
+        .voucher-box { border: 2px dashed var(--primary-blue); padding: 15px; background: white; border-radius: 10px; position: relative; }
+        .hidden { display: none; }
+    </style>
 </head>
 <body class="p-4 flex justify-center">
 
 <div id="main-app" class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
     <div class="orange-header">БРОНИРОВАНИЕ</div>
 
-    <!-- Calendar -->
     <div id="calendar-section" class="p-5">
-        <p class="text-sm font-semibold text-gray-600 mb-3">Выберите дату:</p>
-        <div class="flex justify-between items-center py-2 border-y mb-2">
-            <button onclick="changeMonth(-1)" class="text-blue-600 font-bold text-xl">&lt;</button>
-            <span id="month-year-display" class="font-bold text-blue-900"></span>
-            <button onclick="changeMonth(1)" class="text-blue-600 font-bold text-xl">&gt;</button>
+        <p class="text-sm font-semibold text-gray-600 mb-3 uppercase">Выберите дату:</p>
+        <div class="flex justify-between items-center py-2 border-y mb-4">
+            <button onclick="changeMonth(-1)" class="text-blue-600 font-bold text-2xl px-4">&lt;</button>
+            <span id="month-year-display" class="font-bold text-blue-900 uppercase"></span>
+            <button onclick="changeMonth(1)" class="text-blue-600 font-bold text-2xl px-4">&gt;</button>
         </div>
-        <div class="calendar-grid text-gray-400 font-bold mb-1">
+        <div class="calendar-grid text-gray-400 font-bold mb-2 uppercase text-[10px]">
             <div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>
         </div>
         <div id="days-grid" class="calendar-grid"></div>
 
-        <p class="text-sm font-semibold text-gray-600 mt-5 mb-3">Время:</p>
+        <p class="text-sm font-semibold text-gray-600 mt-6 mb-3 uppercase">Время активности:</p>
         <div class="grid grid-cols-2 gap-4">
             <button class="activity-btn" onclick="setActivityTime('РАССВЕТ', this)">РАССВЕТ</button>
             <button class="activity-btn" onclick="setActivityTime('ЗАКАТ', this)">ЗАКАТ</button>
         </div>
 
-        <div id="selection-summary" class="mt-4 p-3 bg-blue-50 text-blue-800 text-sm rounded-lg hidden text-center"></div>
-
-        <button onclick="openBookingForm()" class="confirm-btn uppercase">Подтвердить</button>
+        <div id="selection-summary" class="mt-4 p-3 bg-blue-50 text-blue-800 text-sm rounded-lg hidden text-center font-bold"></div>
+        <button onclick="openBookingForm()" class="confirm-btn uppercase">Подтвердить ✓</button>
     </div>
 
-    <!-- Booking Form -->
     <div id="form-section" class="p-5 hidden border-t">
-        <h3 class="text-center font-bold text-gray-700 mb-4">Форма бронирования</h3>
+        <h3 class="text-center font-bold text-gray-700 mb-4 uppercase">Данные клиента</h3>
         <div class="space-y-3">
-            <input type="text" id="inp-name" placeholder="Имя и Фамилия" class="w-full border p-3 rounded-lg">
-            <input type="text" id="inp-hotel" placeholder="Название отеля" class="w-full border p-3 rounded-lg">
-            <input type="text" id="inp-tg" placeholder="Telegram (@username)" class="w-full border p-3 rounded-lg">
-            <input type="tel" id="inp-phone" placeholder="Телефон (по желанию)" class="w-full border p-3 rounded-lg">
-            <input type="number" id="inp-pax" placeholder="Кол-во человек" class="w-full border p-3 rounded-lg" oninput="updateTotal()">
+            <input type="text" id="inp-name" placeholder="Имя и Фамилия" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
+            <input type="text" id="inp-hotel" placeholder="Название отеля" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
+            <input type="text" id="inp-tg" placeholder="Telegram (@username)" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500">
+            <input type="number" id="inp-pax" placeholder="Количество человек" class="w-full border p-3 rounded-lg outline-none focus:border-blue-500" oninput="updateTotal()">
 
-            <div class="text-xl font-bold text-right text-blue-900 border-t pt-2">
-                Итог: <span id="total-val">0</span> $
+            <div class="text-xl font-bold text-right text-blue-900 border-t pt-2 uppercase">
+                Итого: <span id="total-val">0</span> $
             </div>
 
-            <button onclick="finalizeBooking()" class="orange-header w-full rounded-lg mt-2">Создать ваучер</button>
+            <button onclick="finalizeBooking()" class="orange-header w-full rounded-lg mt-2 cursor-pointer uppercase">Создать ваучер</button>
         </div>
     </div>
 
-    <!-- Voucher + Pay -->
     <div id="voucher-section" class="p-5 hidden">
         <div class="voucher-box">
-            <div class="absolute top-2 right-2 text-blue-600 font-black text-xs">E‑TRAVELCLUB</div>
-            <h4 class="font-bold border-b pb-2 mb-3">ОНЛАЙН ВАУЧЕР</h4>
+            <div class="absolute top-2 right-2 text-blue-600 font-black text-xs uppercase">E-TRAVELCLUB</div>
+            <h4 class="font-bold border-b pb-2 mb-3 text-gray-800">ОНЛАЙН ВАУЧЕР</h4>
             <div class="text-sm space-y-2 text-gray-700">
                 <p><strong>Voucher:</strong> <span id="v-id"></span></p>
                 <p><strong>Дата/Время:</strong> <span id="v-dt"></span></p>
                 <p><strong>Имя:</strong> <span id="v-name"></span></p>
                 <p><strong>Отель:</strong> <span id="v-hotel"></span></p>
                 <p><strong>Telegram:</strong> <span id="v-tg"></span></p>
-                <p><strong>Контакт:</strong> <span id="v-phone"></span></p>
             </div>
+            <div class="mt-4 text-center text-red-600 font-bold border-t pt-2 animate-pulse">ОЖИДАЕТСЯ ОПЛАТА</div>
         </div>
 
-        <button onclick="payWithCrypto()" class="confirm-btn mt-5">Оплатить Crypto</button>
+        <button onclick="payWithCrypto()" class="confirm-btn mt-5 uppercase">Оплатить (TON/USDT)</button>
     </div>
 </div>
 
 <script>
-const SHEET_API = "https://script.google.com/macros/s/AKfycbxxxxxxxxxxxxxx/exec"; // Buraya Web App URL’ini yapıştırdım
-const WALLET  = "UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv";
+// SENİN VERDİĞİN URL VE CÜZDAN
+const SHEET_API = "https://script.google.com/macros/s/AKfycbznirzkwg-fO3kS7456EF3YlVQn6ivbbNdjlefmKMo6ruthPXEcDs79ggo-AFLk-iirDw/exec";
+const WALLET = "UQDw3BDt3lWzw5TzGLYR7hcmxD76PioJzjLTkOalXTDZ7luv";
+
 const rusMonths = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
 let currentM=6, currentY=2026, selectedD=null, selectedT=null;
 
 function daysInMonth(y,m){return new Date(y,m+1,0).getDate();}
+
 function renderDays(){
- const today=new Date(); 
- document.getElementById('month-year-display').innerText=`${rusMonths[currentM]} ${currentY}`;
- let grid=document.getElementById('days-grid'); grid.innerHTML='';
- let first=new Date(currentY,currentM,1).getDay();
- let offset=(first===0)?6:first-1;
- for(let i=0;i<offset;i++) grid.innerHTML+='<div></div>';
- let total=daysInMonth(currentY,currentM);
- for(let d=1;d<=total;d++){
-  let cell=document.createElement('div'); cell.innerText=d;
-  let dt=new Date(currentY,currentM,d); 
-  if(dt.setHours(0,0,0,0) < today.setHours(0,0,0,0)){
-   cell.className='day-cell disabled';
-  } else {
-   cell.className='day-cell';
-   cell.onclick=()=>{document.querySelectorAll('.day-cell').forEach(c=>c.classList.remove('selected-day'));cell.classList.add('selected-day'); selectedD=`${d} ${rusMonths[currentM]} ${currentY}`;showSummary();}
-  }
-  grid.appendChild(cell);
- }
+    const today = new Date();
+    document.getElementById('month-year-display').innerText = `${rusMonths[currentM]} ${currentY}`;
+    let grid = document.getElementById('days-grid'); 
+    grid.innerHTML = '';
+    
+    let first = new Date(currentY, currentM, 1).getDay();
+    let offset = (first === 0) ? 6 : first - 1;
+    for(let i=0; i<offset; i++) grid.innerHTML += '<div></div>';
+    
+    let total = daysInMonth(currentY, currentM);
+    for(let d=1; d<=total; d++){
+        let cell = document.createElement('div'); 
+        cell.innerText = d;
+        let dt = new Date(currentY, currentM, d);
+        
+        if(dt.setHours(0,0,0,0) < today.setHours(0,0,0,0)){
+            cell.className = 'day-cell disabled';
+        } else {
+            cell.className = 'day-cell';
+            cell.onclick = () => {
+                document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected-day'));
+                cell.classList.add('selected-day'); 
+                selectedD = `${d} ${rusMonths[currentM]} ${currentY}`;
+                showSummary();
+            };
+        }
+        grid.appendChild(cell);
+    }
 }
 
-function changeMonth(dir){currentM+=dir; if(currentM>11){currentM=0; currentY++;} if(currentM<0){currentM=11; currentY--;} renderDays();}
-function setActivityTime(t,b){selectedT=t; document.querySelectorAll('.activity-btn').forEach(x=>x.classList.remove('active'));b.classList.add('active'); showSummary();}
-function showSummary(){ if(selectedD&&selectedT){document.getElementById('selection-summary').classList.remove('hidden'); document.getElementById('selection-summary').innerText=`Выбрано: ${selectedD} / ${selectedT}`;}}
-function openBookingForm(){ if(!selectedD||!selectedT) return alert("Выберите дату и время!"); document.getElementById('form-section').classList.remove('hidden'); window.scrollTo(0,document.body.scrollHeight);}
-function updateTotal(){ let cnt=parseInt(document.getElementById('inp-pax').value)||0; document.getElementById('total-val').innerText=cnt*6;}
+function changeMonth(dir){ currentM += dir; if(currentM > 11){ currentM = 0; currentY++; } if(currentM < 0){ currentM = 11; currentY--; } renderDays(); }
+function setActivityTime(t, b){ selectedT = t; document.querySelectorAll('.activity-btn').forEach(x => x.classList.remove('active')); b.classList.add('active'); showSummary(); }
+function showSummary(){ if(selectedD && selectedT){ document.getElementById('selection-summary').classList.remove('hidden'); document.getElementById('selection-summary').innerText = `ВЫБРАНО: ${selectedD} / ${selectedT}`; } }
+function openBookingForm(){ if(!selectedD || !selectedT) return alert("Выберите дату и время!"); document.getElementById('form-section').classList.remove('hidden'); }
+function updateTotal(){ let cnt = parseInt(document.getElementById('inp-pax').value) || 0; document.getElementById('total-val').innerText = cnt * 6; }
 
 async function saveReservation(data){
- try{ await fetch(SHEET_API,{method:"POST",body:JSON.stringify(data)}); }
- catch(e){ console.log(e); }
+    try { 
+        await fetch(SHEET_API, { method: "POST", mode: "no-cors", body: JSON.stringify(data) }); 
+    } catch(e) { console.error("Sheets Hatası:", e); }
 }
 
 function finalizeBooking(){
- const name=document.getElementById('inp-name').value; if(!name) return alert("Введите имя!");
- let hotel=document.getElementById('inp-hotel').value, tg=document.getElementById('inp-tg').value, phone=document.getElementById('inp-phone').value;
- let pax=parseInt(document.getElementById('inp-pax').value)||0, price=pax*6;
- let voucher="VCH-"+Math.floor(100000+Math.random()*900000);
+    const name = document.getElementById('inp-name').value; 
+    if(!name) return alert("Введите имя!");
+    
+    let hotel = document.getElementById('inp-hotel').value;
+    let tg = document.getElementById('inp-tg').value;
+    let pax = parseInt(document.getElementById('inp-pax').value) || 0;
+    let price = pax * 6;
+    let voucher = "VCH-" + Math.floor(100000 + Math.random() * 900000);
 
-document.getElementById('v-id').innerText=voucher;
-document.getElementById('v-dt').innerText=`${selectedD} / ${selectedT}`;
-document.getElementById('v-name').innerText=name;
-document.getElementById('v-hotel').innerText=hotel;
-document.getElementById('v-tg').innerText=tg||"-";
-document.getElementById('v-phone').innerText=phone||"-";
+    document.getElementById('v-id').innerText = voucher;
+    document.getElementById('v-dt').innerText = `${selectedD} / ${selectedT}`;
+    document.getElementById('v-name').innerText = name;
+    document.getElementById('v-hotel').innerText = hotel;
+    document.getElementById('v-tg').innerText = tg || "-";
 
-saveReservation({date:selectedD,time:selectedT,name,hotel,tg,phone,pax,price,voucher});
-document.getElementById('calendar-section').classList.add('hidden');document.getElementById('form-section').classList.add('hidden');document.getElementById('voucher-section').classList.remove('hidden');
+    saveReservation({ service: "Конная прогулка", datetime: `${selectedD} / ${selectedT}`, client: name, hotel: hotel, telegram: tg, count: pax, price: price, voucherId: voucher });
+
+    document.getElementById('calendar-section').classList.add('hidden');
+    document.getElementById('form-section').classList.add('hidden');
+    document.getElementById('voucher-section').classList.remove('hidden');
 }
 
-function payWithCrypto(){
- let pax=parseInt(document.getElementById('inp-pax').value)||0; let total=pax*6; let ton=total/6; let nano=Math.floor(ton*1000000000);
- window.location.href=`https://app.crypt.bot/pay?amount=${nano}&asset=TON&address=${WALLET}`;
+function payWithCrypto() {
+    const vID = document.getElementById('v-id').innerText;
+    navigator.clipboard.writeText(WALLET).then(() => {
+        alert("Адрес кошелька скопирован! Открываем Tonkeeper...");
+        window.location.href = `https://tonkeeper.app/transfer/${WALLET}?text=${vID}`;
+    });
 }
 
 renderDays();
