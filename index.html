@@ -13,39 +13,13 @@
 }
 body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
 .orange-header { background-color: var(--accent-orange); color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 20px; border-radius: 12px 12px 0 0; text-transform: uppercase; }
-.month-btn { 
-    background-color: var(--primary-blue); 
-    color: white; 
-    padding: 6px; 
-    border-radius: 5px; 
-    font-size: 11px; 
-    transition: 0.3s; 
-    width: 100%;
-    cursor: pointer;
-}
+.month-btn { background-color: var(--primary-blue); color: white; padding: 6px; border-radius: 5px; font-size: 11px; transition: 0.3s; width: 100%; cursor: pointer; }
 .month-btn:hover { background-color: var(--success-green); }
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; text-align: center; font-size: 14px; }
-.day-cell { 
-    padding: 10px 0; 
-    cursor: pointer; 
-    border-radius: 8px; 
-    transition: 0.2s; 
-    border: 1px solid #f0f0f0;
-    background-color: #fff;
-    color: #333;
-    font-weight: 500;
-}
+.day-cell { padding: 10px 0; cursor: pointer; border-radius: 8px; transition: 0.2s; border: 1px solid #f0f0f0; background-color: #fff; color: #333; font-weight: 500; }
 .day-cell:hover { background-color: #e2e8f0; }
 .selected-day { background-color: var(--success-green) !important; color: white !important; font-weight: bold; }
-.activity-btn { 
-    background-color: var(--accent-orange); 
-    color: white; 
-    padding: 12px; 
-    border-radius: 8px; 
-    font-weight: bold; 
-    width: 100%;
-    cursor: pointer;
-}
+.activity-btn { background-color: var(--accent-orange); color: white; padding: 12px; border-radius: 8px; font-weight: bold; width: 100%; cursor: pointer; }
 .activity-btn:hover, .activity-btn.active { background-color: var(--success-green); }
 .confirm-btn { background-color: var(--success-green); color: white; width: 100%; padding: 14px; border-radius: 10px; font-weight: bold; margin-top: 20px; cursor: pointer; }
 .voucher-box { border: 2px dashed var(--primary-blue); padding: 15px; background: white; border-radius: 10px; }
@@ -55,7 +29,7 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
 <body class="p-4 flex justify-center">
 
 <div id="main-app" class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
-    <div class="orange-header">БРОНИРОВАНИЕ</div>
+    <div class="orange-header" id="activity-title">БРОНИРОВАНИЕ</div>
 
     <div id="calendar-section" class="p-5">
         <p class="text-sm font-semibold text-gray-600 mb-3">Выберите месяц и день:</p>
@@ -115,6 +89,7 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
             <h4 class="font-bold border-b pb-2 mb-3 text-gray-800 text-center">ОНЛАЙН ВАУЧЕР</h4>
             <div class="text-sm space-y-2 text-gray-700 text-center">
                 <p><strong>Номер:</strong> <span id="v-id"></span></p>
+                <p><strong>Услуга:</strong> <span id="v-act"></span></p>
                 <p><strong>Дата/Время:</strong> <span id="v-dt"></span></p>
                 <p><strong>Клиент:</strong> <span id="v-name"></span></p>
                 <p><strong>Отель:</strong> <span id="v-hotel"></span></p>
@@ -129,6 +104,22 @@ body { background-color: #f3f4f6; font-family: 'Segoe UI', sans-serif; }
 const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxg4r40tkkLQ-0QOF5Fzb54NvqVY0eo25vURQRG5w_-SJkWM3lYoIshZT5gorI6QhsAkA/exec";
 const rusMonths = ["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"];
 
+// 1️⃣ Telegram linkten start parametresi al
+const urlParams = new URLSearchParams(window.location.search);
+const rawAct = urlParams.get('start') || "at_turu";
+
+// 2️⃣ Sözlük ile okunabilir isme çevir
+const activityDictionary = {
+    "kapadokya_blue_tour": "Синий тур",
+    "kapadokya_red_tour": "Красный тур",
+    "kapadokya_green_tour": "Зеленый тур",
+    "at_turu": "Конная прогулка"
+};
+const activityFromUrl = activityDictionary[rawAct] || rawAct.replace(/_/g,' ');
+
+// 3️⃣ Başlığa yaz
+document.getElementById('activity-title').innerText = activityFromUrl.toUpperCase();
+
 let currentM = 5; // Haziran 2026
 let currentY = 2026;
 let selectedD = null;
@@ -142,19 +133,15 @@ function renderDays() {
     let firstDay = new Date(currentY, currentM, 1).getDay();
     let offset = (firstDay === 0) ? 6 : firstDay - 1;
 
-    for(let i=0; i<offset; i++) {
-        let emptyDiv = document.createElement('div');
-        grid.appendChild(emptyDiv);
-    }
+    for(let i=0; i<offset; i++) grid.appendChild(document.createElement('div'));
 
     const totalDays = new Date(currentY, currentM + 1, 0).getDate();
-
-    for(let d=1; d<=totalDays; d++) {
+    for(let d=1; d<=totalDays; d++){
         let cell = document.createElement('div');
-        cell.innerText = d; // Rakamları buraya yazdırıyoruz
+        cell.innerText = d;
         cell.className = 'day-cell';
-        cell.onclick = function() {
-            document.querySelectorAll('.day-cell').forEach(c => c.classList.remove('selected-day'));
+        cell.onclick = function(){
+            document.querySelectorAll('.day-cell').forEach(c=>c.classList.remove('selected-day'));
             this.classList.add('selected-day');
             selectedD = `${d} ${rusMonths[currentM]} ${currentY}`;
             showSummary();
@@ -163,41 +150,42 @@ function renderDays() {
     }
 }
 
-function changeMonth(dir) { currentM += dir; if(currentM > 11) { currentM = 0; currentY++; } if(currentM < 0) { currentM = 11; currentY--; } renderDays(); }
-function jumpToMonth(m) { currentM = m; renderDays(); }
-function setActivityTime(t, b) { selectedT = t; document.querySelectorAll('.activity-btn').forEach(btn => btn.classList.remove('active')); b.classList.add('active'); showSummary(); }
-function showSummary() { if(selectedD && selectedT) { const s = document.getElementById('selection-summary'); s.classList.remove('hidden'); s.innerText = `Выбрано: ${selectedD} | ${selectedT}`; } }
-function openBookingForm() { if(!selectedD || !selectedT) return alert("Пожалуйста, выберите дату и время!"); document.getElementById('form-section').classList.remove('hidden'); }
-function updateTotal() { document.getElementById('total-val').innerText = (document.getElementById('inp-pax').value || 0) * 6; }
+function changeMonth(dir){ currentM += dir; if(currentM>11){ currentM=0; currentY++; } if(currentM<0){ currentM=11; currentY--; } renderDays(); }
+function jumpToMonth(m){ currentM = m; renderDays(); }
+function setActivityTime(t,b){ selectedT=t; document.querySelectorAll('.activity-btn').forEach(btn=>btn.classList.remove('active')); b.classList.add('active'); showSummary(); }
+function showSummary(){ if(selectedD && selectedT){ const s=document.getElementById('selection-summary'); s.classList.remove('hidden'); s.innerText=`Выбрано: ${selectedD} | ${selectedT}`; } }
+function openBookingForm(){ if(!selectedD || !selectedT) return alert("Пожалуйста, выберите дату и время!"); document.getElementById('form-section').classList.remove('hidden'); }
+function updateTotal(){ document.getElementById('total-val').innerText=(document.getElementById('inp-pax').value||0)*6; }
 
-async function finalizeBooking() {
-    const name = document.getElementById('inp-name').value;
-    const hotel = document.getElementById('inp-hotel').value;
-    const tg = document.getElementById('inp-tg').value || "-";
-    if(!name || !hotel) return alert("Введите данные!");
+async function finalizeBooking(){
+    const name=document.getElementById('inp-name').value;
+    const hotel=document.getElementById('inp-hotel').value;
+    const tg=document.getElementById('inp-tg').value||"-";
+    if(!name||!hotel) return alert("Введите данные!");
 
-    const vNumber = "VCH-" + Math.floor(100000 + Math.random() * 900000);
-    const vDate = `${selectedD} / ${selectedT}`;
+    const vNumber="VCH-"+Math.floor(100000+Math.random()*900000);
+    const vDate=`${selectedD} / ${selectedT}`;
 
-    document.getElementById('v-id').innerText = vNumber;
-    document.getElementById('v-dt').innerText = vDate;
-    document.getElementById('v-name').innerText = name;
-    document.getElementById('v-hotel').innerText = hotel;
+    document.getElementById('v-id').innerText=vNumber;
+    document.getElementById('v-act').innerText=activityFromUrl; // dinamik
+    document.getElementById('v-dt').innerText=vDate;
+    document.getElementById('v-name').innerText=name;
+    document.getElementById('v-hotel').innerText=hotel;
 
     document.getElementById('calendar-section').classList.add('hidden');
     document.getElementById('form-section').classList.add('hidden');
     document.getElementById('voucher-section').classList.remove('hidden');
 
-    fetch(GOOGLE_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        body: JSON.stringify({
-            "Номер": vNumber,
-            "Услуга": "Конная прогулка",
-            "Дата/Время": vDate,
-            "Клиент": name,
-            "Название отеля": hotel,
-            "Ваш Telegram": tg
+    fetch(GOOGLE_URL,{
+        method:'POST',
+        mode:'no-cors',
+        body:JSON.stringify({
+            "Номер":vNumber,
+            "Услуга":activityFromUrl,
+            "Дата/Время":vDate,
+            "Клиент":name,
+            "Название отеля":hotel,
+            "Ваш Telegram":tg
         })
     });
 }
